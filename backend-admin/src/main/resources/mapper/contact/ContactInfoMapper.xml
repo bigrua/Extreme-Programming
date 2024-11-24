@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.contact.mapper.ContactInfoMapper">
+
+    <resultMap type="ContactInfo" id="ContactInfoResult">
+        <result property="contactId"    column="contact_id"    />
+        <result property="name"    column="name"    />
+        <result property="socialAccount"    column="social_account"    />
+        <result property="phoneNumber1"    column="phone_number1"    />
+        <result property="phoneNumber2"    column="phone_number2"    />
+        <result property="email"    column="email"    />
+        <result property="address"    column="address"    />
+        <result property="oftenFlag"    column="often_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectContactInfoVo">
+        select contact_id, name, social_account, phone_number1, phone_number2, email, address, often_flag, create_by, create_time, update_by, update_time, remark from contact_info
+    </sql>
+
+    <select id="selectContactInfoList" parameterType="ContactInfo" resultMap="ContactInfoResult">
+        <include refid="selectContactInfoVo"/>
+        <where>
+            <if test="name != null  and name != ''">
+                and (name like concat('%', #{name}, '%') or phone_number1 like concat('%', #{name}, '%') or phone_number2 like concat('%', #{name}, '%'))
+            </if>
+            <if test="oftenFlag != null  and oftenFlag != ''"> and often_flag = #{oftenFlag}</if>
+        </where>
+        order by contact_id desc
+    </select>
+
+    <select id="selectContactInfoByContactId" parameterType="Long" resultMap="ContactInfoResult">
+        <include refid="selectContactInfoVo"/>
+        where contact_id = #{contactId}
+    </select>
+
+    <insert id="insertContactInfo" parameterType="ContactInfo" useGeneratedKeys="true" keyProperty="contactId">
+        insert into contact_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="socialAccount != null">social_account,</if>
+            <if test="phoneNumber1 != null">phone_number1,</if>
+            <if test="phoneNumber2 != null">phone_number2,</if>
+            <if test="email != null">email,</if>
+            <if test="address != null">address,</if>
+            <if test="oftenFlag != null">often_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="socialAccount != null">#{socialAccount},</if>
+            <if test="phoneNumber1 != null">#{phoneNumber1},</if>
+            <if test="phoneNumber2 != null">#{phoneNumber2},</if>
+            <if test="email != null">#{email},</if>
+            <if test="address != null">#{address},</if>
+            <if test="oftenFlag != null">#{oftenFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateContactInfo" parameterType="ContactInfo">
+        update contact_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="socialAccount != null">social_account = #{socialAccount},</if>
+            <if test="phoneNumber1 != null">phone_number1 = #{phoneNumber1},</if>
+            <if test="phoneNumber2 != null">phone_number2 = #{phoneNumber2},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="oftenFlag != null">often_flag = #{oftenFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where contact_id = #{contactId}
+    </update>
+
+    <delete id="deleteContactInfoByContactId" parameterType="Long">
+        delete from contact_info where contact_id = #{contactId}
+    </delete>
+
+    <delete id="deleteContactInfoByContactIds" parameterType="String">
+        delete from contact_info where contact_id in
+        <foreach item="contactId" collection="array" open="(" separator="," close=")">
+            #{contactId}
+        </foreach>
+    </delete>
+
+    <update id="setOftenContact">
+        update contact_info set often_flag = 'Y' where contact_id in
+        <foreach item="contactId" collection="array" open="(" separator="," close=")">
+            #{contactId}
+        </foreach>
+    </update>
+</mapper>
